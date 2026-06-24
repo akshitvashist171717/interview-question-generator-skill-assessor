@@ -75,41 +75,9 @@ with st.sidebar:
         st.markdown(f"<div style='font-size:0.83rem; color:{c}; margin:3px 0;'>"
                      f"{dot}&nbsp;&nbsp;{label}</div>", unsafe_allow_html=True)
 
-    # ── Theme picker ──────────────────────────────────────────────────────
-    st.markdown("---")
-    st.markdown("<div style='color:var(--muted); font-size:0.74rem; font-weight:600; "
-                "letter-spacing:0.04em;'>COLOUR THEME</div>", unsafe_allow_html=True)
+    
 
-    theme_keys = list(THEMES.keys())
-    theme_labels = [THEMES[k]["label"] for k in theme_keys]
-    current_idx = theme_keys.index(st.session_state.theme) if st.session_state.theme in theme_keys else 0
-
-    selected_label = st.radio(
-        "Theme", options=theme_labels, index=current_idx,
-        label_visibility="collapsed", key="theme_radio",
-    )
-    selected_key = theme_keys[theme_labels.index(selected_label)]
-
-    # Swatch preview row for every theme option
-    for k in theme_keys:
-        t = THEMES[k]
-        dots = "".join(
-            f"<span class='theme-swatch' style='background:{c};'></span>"
-            for c in t["swatch"]
-        )
-        marker = "→ " if k == selected_key else "&nbsp;&nbsp;&nbsp;"
-        st.markdown(
-            f"<div style='display:flex; align-items:center; gap:6px; margin:2px 0; "
-            f"font-size:0.78rem; color:var(--muted);'>{marker}{dots}&nbsp;{t['label']}</div>",
-            unsafe_allow_html=True,
-        )
-
-    if selected_key != st.session_state.theme:
-        st.session_state.theme = selected_key
-        st.rerun()
-
-    st.markdown("---")
-    st.caption("Trained on 8,167 real resumes · 2,277 job postings · 493 IT role profiles")
+   
 
 
 page = st.session_state.page
