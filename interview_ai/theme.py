@@ -69,6 +69,68 @@ THEMES = {
             "chip-cyan-border":"#1E4A5E",
         },
     },
+    "sage": {
+        "label": "Sage Garden",
+        "swatch": ["#F6F8F4", "#5A8A6B", "#23302A"],
+        "google_fonts": "Lora:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500",
+        "heading_font": "'Lora', Georgia, serif",
+        "body_font":    "'Inter', -apple-system, sans-serif",
+        "vars": {
+            "bg":          "#F6F8F4",
+            "surface":     "#FFFFFF",
+            "sidebar":     "#EEF3EA",
+            "ink":         "#23302A",
+            "ink-soft":    "#3C4A41",
+            "muted":       "#7A887E",
+            "accent":      "#5A8A6B",
+            "accent-hov":  "#487057",
+            "accent-soft": "#E1ECE3",
+            "border":      "#DEE7DA",
+            "border-soft": "#E8F0E5",
+            "success":     "#4C8C5A",
+            "success-bg":  "#E6F2E8",
+            "warning":     "#B98A2C",
+            "warning-bg":  "#F8F0DC",
+            "danger":      "#B5503F",
+            "danger-bg":   "#F7E6E2",
+            "sidebar-hover":   "#E2EBDD",
+            "sidebar-active-border": "#B8D4BE",
+            "chip-cyan-bg":    "#E2EFEE",
+            "chip-cyan-text":  "#347A78",
+            "chip-cyan-border":"#C2DEDB",
+        },
+    },
+    "violet": {
+        "label": "Violet Ink",
+        "swatch": ["#FAF8FC", "#7C5CC4", "#2A2438"],
+        "google_fonts": "Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500",
+        "heading_font": "'Fraunces', Georgia, serif",
+        "body_font":    "'Inter', -apple-system, sans-serif",
+        "vars": {
+            "bg":          "#FAF8FC",
+            "surface":     "#FFFFFF",
+            "sidebar":     "#F1ECF8",
+            "ink":         "#2A2438",
+            "ink-soft":    "#473F58",
+            "muted":       "#8B82A0",
+            "accent":      "#7C5CC4",
+            "accent-hov":  "#6747AE",
+            "accent-soft": "#EAE2F6",
+            "border":      "#E5DEF0",
+            "border-soft": "#EFE9F7",
+            "success":     "#5E9C6F",
+            "success-bg":  "#E7F2E9",
+            "warning":     "#BD8F2E",
+            "warning-bg":  "#F9F1DD",
+            "danger":      "#C1564C",
+            "danger-bg":   "#F8E6E4",
+            "sidebar-hover":   "#E6DEF2",
+            "sidebar-active-border": "#C9B5E6",
+            "chip-cyan-bg":    "#E7EBFA",
+            "chip-cyan-text":  "#4C5FA8",
+            "chip-cyan-border":"#CCD4F2",
+        },
+    },
 }
 
 DEFAULT_THEME = "claude"
@@ -342,6 +404,12 @@ hr {{ border-color: var(--border) !important; margin: 1.4rem 0; }}
 /* ── Checkbox / radio labels ── */
 [data-testid="stAppViewContainer"] label {{ color: var(--ink-soft); }}
 
-
+/* ── Theme swatch picker ── */
+.theme-swatch-row {{ display: flex; gap: 6px; margin-bottom: 2px; }}
+.theme-swatch {{
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.12);
+    display: inline-block;
+}}
 </style>
 """
