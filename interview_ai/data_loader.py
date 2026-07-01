@@ -131,7 +131,7 @@ def _load_skill_df() -> pd.DataFrame:
 # Public API
 # ─────────────────────────────────────────────────────────────────────────────
 
-def get_training_corpus() -> tuple[list[str], list[str]]:
+def get_training_corpus() -> tuple[list[str], list[str]]: ##corpus meaning is collection of text documents
     """
     Returns (texts, labels) for ML classifier training.
     PRIMARY SOURCE: final_merged_dataset2.csv — 8,234 real resumes, 10 roles.
@@ -147,10 +147,10 @@ def get_all_roles() -> list[str]:
 
 
 def get_role_category(role: str) -> str:
-    return ROLE_CATEGORY.get(role, "Engineering")
+    return ROLE_CATEGORY.get(role, "Engineering")##.get() to access the dictionary , it will not crash the system will return engineering as the default value  
 
 
-def get_skills_for_role(role: str) -> list[str]:
+def get_skills_for_role(role: str) -> list[str]: ##the function expects a string 
     """Returns reference skill list for a role from IT_Job_Roles_Skills.csv (fuzzy matched)."""
     skill_df = _load_skill_df()
     role_lower = role.lower()
