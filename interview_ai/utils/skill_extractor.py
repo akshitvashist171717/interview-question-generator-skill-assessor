@@ -169,11 +169,7 @@ def extract_skills(text: str) -> list[dict]:
 
     return sorted(found.values(), key=lambda x: (-x["confidence"], x["skill"]))
 
-
 def _years(skill: str, text: str) -> int | None:
-    "3 years of Python experience  → pattern 1 matches → returns 3
-"Python (5+ years)             → pattern 2 matches → returns 5""
-    
     patterns = [
         rf"(\d+)\+?\s+years?\s+(?:of\s+)?(?:experience\s+(?:in|with)\s+)?{re.escape(skill.lower())}",
         rf"{re.escape(skill.lower())}\s+(?:\w+\s+){{0,3}}(\d+)\+?\s+years?",
