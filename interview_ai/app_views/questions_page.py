@@ -5,7 +5,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from utils.gemini_client import generate_questions
+from utils.gemini_client import (
+    generate_questions_from_jd_resume,
+    generate_questions_from_resume_only,
+    generate_questions_from_jd_only,
+)
 from theme import get_active_colors
 
 
@@ -29,31 +33,88 @@ def render():
     ml_pred = st.session_state.ml_prediction
 
     st.markdown("##### Question configuration")
+
+    MODE_RESUME   = "Resume only"
+    MODE_JD       = "JD only"
+    MODE_COMBINED = "Combined (JD + Resume)"
+
+    gen_mode = st.selectbox(
+        "Generate questions based on",
+        [MODE_RESUME, MODE_JD, MODE_COMBINED],
+        index=2,
+        help="**Resume only**: questions are generated purely from the candidate's resume — "
+             "the job description is not used.\n\n"
+             "**JD only**: questions are generated purely from the job description — "
+             "the candidate's resume is not used.\n\n"
+             "**Combined (JD + Resume)**: sends both the full job description and resume text "
+             "to Gemini so questions are tailored to this exact JD and this exact candidate.",
+    )
+
+    has_resume = bool((st.session_state.resume_text or "").strip())
+    has_jd = bool((st.session_state.jd_text or "").strip())
+
     col_n, col_focus, col_api = st.columns([1, 2, 1])
     with col_n:
         n_questions = st.slider("Number of questions", 5, 20, 10)
     with col_focus:
         focus_opts = ["All matched skills"] + match["matched_required"][:8] + match["matched_preferred"][:4]
         focus = st.multiselect("Focus on skills (optional)", options=focus_opts, default=[])
+        st.caption("Steers question topics when possible, and is used as the skill pool for offline fallback questions.")
     with col_api:
         api_key = st.session_state.get("gemini_api_key", "")
         st.markdown("**Gemini API** ✓" if api_key else "**Gemini API** — *(fallback mode)*")
         if not api_key and st.button("Add Key"):
             st.session_state.page = "settings"; st.rerun()
 
-    if st.button("Generate Questions with Gemini", type="primary"):
+    # Validate that the data required for the chosen mode is actually available.
+    missing_data_msg = None
+    if gen_mode == MODE_RESUME and not has_resume:
+        missing_data_msg = "Resume text not found. Please complete the resume upload step first."
+    elif gen_mode == MODE_JD and not has_jd:
+        missing_data_msg = "Job description text not found. Please complete the JD analysis step first."
+    elif gen_mode == MODE_COMBINED and not (has_resume and has_jd):
+        missing_pieces = []
+        if not has_resume: missing_pieces.append("resume")
+        if not has_jd: missing_pieces.append("job description")
+        missing_data_msg = f"Missing {' and '.join(missing_pieces)} text — please complete the earlier steps first."
+
+    if missing_data_msg:
+        st.warning(missing_data_msg)
+
+    if st.button("Generate Questions with Gemini", type="primary", disabled=bool(missing_data_msg)):
         skills_to_use = focus if (focus and "All matched skills" not in focus) else \
                         (match["matched_required"] + match["matched_preferred"])
         with st.spinner("Gemini is crafting your questions..."):
             if api_key: os.environ["GEMINI_API_KEY"] = api_key
-            questions = generate_questions(
-                role=ml_pred["role"], matched_skills=skills_to_use,
-                missing_skills=match["missing_required"][:5],
-                jd_text=st.session_state.jd_text or "", n=n_questions,
-            )
-            st.session_state.questions = questions
-            st.session_state.evaluations = {}
-            st.session_state.answers = {}
+            if gen_mode == MODE_RESUME:
+                questions = generate_questions_from_resume_only(
+                    role=ml_pred["role"],
+                    resume_text=st.session_state.resume_text or "",
+                    matched_skills=skills_to_use,
+                    n=n_questions,
+                )
+            elif gen_mode == MODE_JD:
+                questions = generate_questions_from_jd_only(
+                    role=ml_pred["role"],
+                    jd_text=st.session_state.jd_text or "",
+                    matched_skills=skills_to_use,
+                    n=n_questions,
+                )
+            else:
+                questions = generate_questions_from_jd_resume(
+                    role=ml_pred["role"],
+                    jd_text=st.session_state.jd_text or "",
+                    resume_text=st.session_state.resume_text or "",
+                    matched_skills=skills_to_use,
+                    n=n_questions,
+                )
+
+            if not questions:
+                st.error("No questions could be generated. Please check your Gemini API key or try again.")
+            else:
+                st.session_state.questions = questions
+                st.session_state.evaluations = {}
+                st.session_state.answers = {}
 
     if st.session_state.questions:
         _display(st.session_state.questions)
