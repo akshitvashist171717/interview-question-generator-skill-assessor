@@ -132,7 +132,7 @@ def _process_resume(text: str, filename: str):
         "Skill": s["skill"],
         "Confidence": f"{int(s['confidence']*100)}%",
         "In Skills Section": "Yes" if s["in_skills_section"] else "—",
-        "Years Exp.": s["years_exp"] if s["years_exp"] else "—",
+        "Years Exp.": str(s["years_exp"]) if s["years_exp"] else "—",
     } for s in skills])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
